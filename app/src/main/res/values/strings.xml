@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">Petani Kecipir</string>
+    <string name="company_name">Kecipir</string>
+
+    <string name="navigation_drawer_open">Menu</string>
+    <string name="navigation_drawer_close">Tutup</string>
+
+    <string name="action_settings">Pengaturan</string>
+
+    <!--Sidebar Menus-->
+
+    <string name="menu_my_account">Akun Saya</string>
+    <string name="menu_harvests">Panen</string>
+    <string name="menu_orders">Order</string>
+    <string name="menu_payments">Pembayaran</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_phone">Nomor Telepon</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+
+    <string name="error_internet_connection">Tidak ada koneksi internet</string>
+    <string name="error_invalid_phone">Nomor telepon tidak valid</string>
+    <string name="error_invalid_password">Password terlalu pendek</string>
+    <string name="error_incorrect_password">Nomor telepon atau password salah</string>
+    <string name="error_field_required">Bidang ini harus diisi</string>
+    <string name="error_occured">Terjadi kesalahan</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing phone number completions."</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="title_activity_login2">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+
+    <!-- Dashboard period -->
+    <string name="period_daily">Harian</string>
+    <string name="period_monthly">Bulanan</string>
+    <string name="period_yearly">Tahunan</string>
+
+    <!-- General -->
+    <string name="all">Semua</string>
+</resources>

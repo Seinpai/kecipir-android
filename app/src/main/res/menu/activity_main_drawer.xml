@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_account"
+            android:icon="@drawable/ic_user_orange"
+            android:title="@string/menu_my_account" />
+        <item
+            android:id="@+id/nav_harvest"
+            android:icon="@drawable/ic_farm_orange"
+            android:title="@string/menu_harvests" />
+        <item
+            android:id="@+id/nav_order"
+            android:icon="@drawable/ic_harvest_orange"
+            android:title="@string/menu_orders" />
+        <!--<item-->
+            <!--android:id="@+id/nav_payment"-->
+            <!--android:icon="@drawable/ic_money_orange"-->
+            <!--android:title="@string/menu_payments" />-->
+    </group>
+
+</menu>

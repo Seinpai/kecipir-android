@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal"
+    android:background="@color/color_fragment_background"
+    android:orientation="vertical"
+    tools:context="com.kecipir.petani.fragment.PanenanFragment">
+
+
+
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true">
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+
+
+
+            <RelativeLayout
+                android:id="@+id/card_view"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_10sdp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@android:color/white"
+                    android:elevation="3dp">
+
+                    <ImageView
+                        android:id="@+id/thumbnail_panenan_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:scaleType="fitXY" />
+
+                    <TextView
+                        android:id="@+id/grade_paanenan_detail"
+                        android:layout_width="70dp"
+                        android:layout_height="25dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@+id/thumbnail_panenan_detail"
+                        android:layout_marginEnd="14dp"
+                        android:layout_marginRight="14dp"
+                        android:background="@color/colorPrimaryDark"
+                        android:fontFamily="sans-serif-condensed"
+                        android:gravity="center"
+                        android:paddingLeft="@dimen/_2sdp"
+                        android:paddingRight="@dimen/_2sdp"
+                        android:text="Grade A"
+                        android:textColor="#ffffff"
+                        android:textSize="14dp" />
+
+                    <TextView
+                        android:id="@+id/item_panenan_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/grade_paanenan_detail"
+                        android:layout_marginLeft="14dp"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginTop="21dp"
+                        android:paddingBottom="5dp"
+                        android:paddingRight="10dp"
+                        android:text="Ayam Kampung Organik M"
+                        android:textColor="#000"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/price_panenan_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignLeft="@+id/item_panenan_detail"
+                        android:layout_alignStart="@+id/item_panenan_detail"
+                        android:layout_below="@+id/item_panenan_detail"
+                        android:text="Rp 109.000"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/satuan_panenan_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@+id/price_panenan_detail"
+                        android:layout_alignBottom="@+id/price_panenan_detail"
+                        android:layout_toEndOf="@+id/price_panenan_detail"
+                        android:layout_toRightOf="@+id/price_panenan_detail"
+                        android:gravity="left"
+                        android:text="/ekor"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/satuan_panenan_detail2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@+id/item_panenan_detail"
+                        android:layout_alignBottom="@+id/item_panenan_detail"
+                        android:layout_toEndOf="@+id/item_panenan_detail"
+                        android:layout_toRightOf="@+id/item_panenan_detail"
+                        android:gravity="left"
+                        android:text="ekor"
+                        android:textColor="#000"
+                        android:textSize="14dp"
+                        android:visibility="invisible" />
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="15dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:text="Jumlah:" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_60sdp"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/minus_aksi_panenan"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/button_gray"
+                        android:onClick="onClick"
+                        android:text="-"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/black"
+                        android:textSize="36sp" />
+
+                    <EditText
+                        android:id="@+id/input_panenan_quantity"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="40dp"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/card_background_white"
+                        android:inputType="number"
+                        android:padding="6dp"
+                        android:textAlignment="center" />
+
+                    <TextView
+                        android:id="@+id/plus_aksi_panenan"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="15dp"
+                        android:background="@drawable/button_gray"
+                        android:onClick="onClick"
+                        android:text="+"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/black"
+                        android:textSize="30sp" />
+                </LinearLayout>
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/submit_panenan"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15dp"
+                    android:text="Simpan" />
+
+                <TextView
+                    android:id="@+id/qtyDipesan"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/petaniBarangId"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+
+
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <com.victor.loading.rotate.RotateLoading
+        android:id="@+id/rotateloading"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        app:loading_color="@color/main_color"
+        app:loading_speed="11"
+        app:loading_width="5dp" />
+
+</RelativeLayout>

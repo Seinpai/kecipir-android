@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <color name="colorPrimary">#4fd45a</color>
+    <color name="colorPrimaryDark">#00a22a</color>
+    <color name="colorAccent">#FF7500</color>
+    <color name="colorBackground">#00a22a</color>
+    <color name="colorMuted">#E3E1DD</color>
+
+    <color name="colorHarvest">#91D188</color>
+    <color name="colorOrder">#E99A3D</color>
+    <color name="colorShipment">#478EAC</color>
+    <color name="colorLoss">#D64445</color>
+
+    <color name="mdtp_accent_color">#009688</color>
+    <color name="mdtp_accent_color_dark">#00796b</color>
+
+    <color name="btnWarningBackground">#FF7500</color>
+    <color name="btnWarningColor">#FFFFFF</color>
+
+    <color name="color_navigation_list_background">#FFFFFF</color>
+    <color name="color_icon_navigation_item">#FF7500</color>
+
+    <color name="color_tab_background">#FFFFFF</color>
+    <color name="color_fragment_background">#E3E1DD</color>
+
+    <color name="background_notification_read">#F6F5F4</color>
+    <color name="background_notification_unread">#EFEEEC</color>
+    <color name="color_notification_read">#797671</color>
+    <color name="color_notification_unread">#252525</color>
+    <color name="icon_notification_read">#A0E596</color>
+    <color name="icon_notification_unread">#4FD45A</color>
+
+        <color name="background">#65828e</color>
+        <color name="main_color">#ff9a00</color>
+        <color name="secondary_color">#BDBDBD</color>
+</resources>
