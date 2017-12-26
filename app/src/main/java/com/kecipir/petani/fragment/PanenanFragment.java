@@ -3,18 +3,24 @@ package com.kecipir.petani.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.TypedValue;
@@ -31,6 +37,7 @@ import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +46,9 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.JsonArray;
@@ -47,6 +57,8 @@ import com.kecipir.petani.BaseActivity;
 import com.kecipir.petani.MainActivity;
 import com.kecipir.petani.R;
 import com.kecipir.petani.adapter.PanenanAdapter;
+import com.kecipir.petani.dialog.LoadingDialog;
+import com.kecipir.petani.entities.TmpDbPanenan;
 import com.kecipir.petani.preference.AccountPreference;
 import com.kecipir.petani.rest.Api;
 import com.kecipir.petani.rest.callback.TokenCallback;
@@ -58,6 +70,7 @@ import com.kecipir.petani.util.EmptyDataViewer;
 import com.kecipir.petani.util.EndlessScrollListener;
 import com.kecipir.petani.rest.callback.TokenCallback;
 import com.roomorama.caldroid.CaldroidFragment;
+import com.victor.loading.rotate.RotateLoading;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,6 +79,7 @@ import org.json.JSONObject;
 import java.io.Console;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -75,19 +89,25 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Response;
+import retrofit2.http.POST;
 
 public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoader{
     //private ViewPagerAdapter viewPagerAdapter;
     private Spinner spinner_category;
     private String[] arraySpinner;
     List<String> list;
+    ArrayList<String> list2;
+
+    private String PanenId,Tgl;
+    private int QtyPanen;
 
     //SET API AND FRAGMENT TAG
     private static final String TAG = PanenanFragment.class.getSimpleName();
-    private View mFragmentView;
+    private View mFragmentView, mFragmentView2;
     private AccountPreference mAccountPreference;
     private Api mApi;
 
+    private LinearLayout linearLayout;
     //SET CARD AND LOADING
     private RecyclerView mRecyclerView;
     private View mLoadingView;
@@ -98,6 +118,9 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
     private PanenanAdapter mAdapter;
     private EmptyDataViewer mEmptyViewer;
 
+    private EditText qty;
+    private TextView minus, plus;
+
     //SET DATE
     public String tanggal,tanggal_set,tanggal_calender, hari_now;
     String tmp_hari = "";
@@ -107,6 +130,18 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
     public boolean mHasResponse;
     private DatePickerDialog datePickerDialog;
     private DatePickerDialog datePickerDialog2;
+
+    public EditText panenanRequest;
+
+    private RotateLoading rotateLoading;
+
+    private LinearLayout focused;
+    public int getCounter;
+
+    int flag = 0;
+    int test;
+
+    private TextView fab_save;
 
     Calendar c = Calendar.getInstance();
     String month_name[] = {"JAN","FEB","MAR","APR","MEI","JUN","JUL","AUG","SEP","OKT","NOV","DES"};
@@ -122,6 +157,8 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
     int dy = c.get(Calendar.DAY_OF_MONTH);
     int ttl = c.get(Calendar.DAY_OF_WEEK);
     int counter = 0;
+
+    int qty_panen,qty_dipesan;
 
     //SET FOR SEARCH ACTION
     MenuItem action_search;
@@ -149,6 +186,9 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
         mHasResponse = false;
         mAdapter = new PanenanAdapter(getContext(), this);
         namaPetani = mAccountPreference.getName();
+
+
+
 //        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
 //        Date d = new Date();
 //        dayOfTheWeek = sdf.format(d);
@@ -157,8 +197,10 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         mFragmentView = inflater.inflate(R.layout.fragment_panenan, container, false);
+        mFragmentView2 = inflater.inflate(R.layout.item_panenan_new, container, false);
+
         mTitle = (TextView) getActivity().findViewById(R.id.toolbar_title);
         mSearch = (EditText) getActivity().findViewById(R.id.input_search);
         ((MainActivity)getActivity()).enableViews(false);;
@@ -166,6 +208,292 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
         mTitle.setText("Input Panenan");
 
         mRecyclerView = (RecyclerView) mFragmentView.findViewById(R.id.panenan_list);
+        linearLayout = (LinearLayout) mFragmentView.findViewById(R.id.filters);
+
+        rotateLoading = (RotateLoading) mFragmentView.findViewById(R.id.rotateloading);
+
+
+        focused = (LinearLayout) mFragmentView.findViewById(R.id.focused);
+
+        minus = (TextView) mFragmentView2.findViewById(R.id.minus_aksi_panenan);
+        plus = (TextView) mFragmentView2.findViewById(R.id.plus_aksi_panenan);
+
+
+
+        panenanRequest = (EditText) mFragmentView.findViewById(R.id.PanenanReq);
+        fab_save = (TextView) mFragmentView.findViewById(R.id.fab_save);
+
+
+
+
+
+        fab_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                focused.requestFocus();
+
+                String loading = "Loading";
+                final String simpan = "simpan";
+
+                fab_save.setBackground(getResources().getDrawable(R.drawable.button_square_red));
+                fab_save.setText(loading);
+
+                Toast.makeText(getContext(), "Mohon Tunggu", Toast.LENGTH_LONG).show();
+
+                mAdapter.SaveAll();
+
+//                int array = mAdapter.getItemCount()-1;
+
+//                ArrayList<String[]> arrayList1;
+//                arrayList1 = mAdapter.retreivedata();
+
+//                System.out.println(arrayList1.size());
+
+//                for(int pos = 0; pos < arrayList1.size(); pos ++){
+//
+//
+//                    String[] a = arrayList1.get(pos);
+//
+//                    System.out.println(Arrays.toString(a));
+//
+//                }
+
+
+//                Toast.makeText(getContext(), String.valueOf(i), Toast.LENGTH_SHORT).show();
+
+//                panenanRequest.addTextChangedListener(new TextWatcher() {
+//                    @Override
+//                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//                    }
+//
+//                    @Override
+//                    public void afterTextChanged(Editable editable) {
+//                        if (editable.toString().equals("0")){
+//                            rotateLoading.stop();
+//
+//                            fab_save.setBackground(getResources().getDrawable(R.drawable.button_orange));
+//                            fab_save.setText(simpan);
+//
+//                        }else {
+//                            rotateLoading.start();
+//                        }
+//                    }
+//                });
+
+
+
+//                for (int childCount = mRecyclerView.getChildCount(), i = 0; i < childCount; ++i) {
+//                    PanenanAdapter.ViewHolder vh = (PanenanAdapter.ViewHolder) mRecyclerView.findViewHolderForAdapterPosition(i);
+//                    panenid = vh.id_petani_barang.toString();
+//                }
+
+//                int iii;
+
+//                PanenanAdapter.ViewHolder vh = (PanenanAdapter.ViewHolder) mRecyclerView.findViewHolderForLayoutPosition(6);
+//                PanenId = vh.id_petani_barang.getText().toString();
+//                QtyPanen = Integer.parseInt(vh.quantity_panenan.getText().toString());
+//                Tgl = vh.tanggal_panenan;
+////
+//                Log.i("","List Object = " +  iii);
+//                Log.i("","panenid = " + PanenId+" Qty "+QtyPanen+ " Tanggal panen "+Tgl );
+
+//                iii = mAdapter.getItemCount()-2;
+//                List<JSONObject> myJSONObjects = new  ArrayList<JSONObject> ();
+//                Log.i("","List Object has next = " +  iii);
+//                for(int i=0; i < iii; i++) {
+//                    PanenanAdapter.ViewHolder vh = (PanenanAdapter.ViewHolder) mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
+//                    PanenId = vh.id_petani_barang.getText().toString();
+//                    QtyPanen = Integer.parseInt(vh.quantity_panenan.getText().toString());
+//                    Tgl = vh.tanggal_panenan;
+//
+//
+//                    JSONArray array = new JSONArray();
+//                    JSONObject obj = new JSONObject();
+//
+//                    try {
+//                        obj.put("ProductId", PanenId);
+//                        obj.put("Qty" , QtyPanen);
+//                        obj.put("Tgl" , Tgl);
+//                        array.put(obj);
+//                        myJSONObjects.add(obj);
+//
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                }
+//                Log.i("","List Object = " +  myJSONObjects);
+
+
+
+//                Log.i("","panenid = " + PanenId+" Qty "+QtyPanen+ " Tanggal panen "+Tgl );
+
+//                editor.putBoolean("done", true);
+//                editor.apply();
+
+//                new TextWatcher(){
+//                    boolean _ignore = false;
+//                    @Override
+//                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+//
+//                    @Override
+//                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+//
+//                    @Override
+//                    public void afterTextChanged(Editable editable) {
+//                        if (_ignore)
+//                            return;
+//
+//                        _ignore = true; // prevent infinite loop
+//                        // Change your text here.
+//                        // myTextView.setText(myNewText);
+////                        panenanRequest.setText(getCounter);
+//                        Toast.makeText(getContext(), String.valueOf(editable), Toast.LENGTH_SHORT).show();
+//
+//                        _ignore = false; // release, so the TextWatcher start to listen again.
+//                    }
+//                };
+//
+//                new TextWatcher() {
+//                    boolean _ignore = false; // indicates if the change was made by the TextWatcher itself.
+//
+//                    @Override
+//                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//                    }
+//
+//                    @Override
+//                    public void afterTextChanged(Editable s) {
+//                        if (_ignore)
+//                            return;
+//
+//                        _ignore = true; // prevent infinite loop
+//                        // Change your text here.
+//                        // myTextView.setText(myNewText);
+//                        getCounter = mAdapter.getCounter();
+//                        Toast.makeText(getContext(), getCounter, Toast.LENGTH_SHORT).show();
+//
+//                        if (getCounter == 0 ){
+//                            new android.support.v7.app.AlertDialog.Builder(getContext())
+//                                    .setTitle("Berhasil")
+//                                    .setMessage("Save Panen Berhasil")
+//                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(DialogInterface dialogInterface, int i) {
+//                                        }
+//                                    })
+//                                    .show();
+//                        } else{
+//                            Toast.makeText(getContext(), "Loading ...", Toast.LENGTH_SHORT).show();
+//                        }
+//                        _ignore = false; // release, so the TextWatcher start to listen again.
+//                    }
+//
+//                };
+//
+//
+
+
+//                for (int i = 0; i < test; i++ ){
+//
+//                    qty = (EditText) mRecyclerView.getChildAt(i).findViewById(R.id.input_panenan_quantity_new);
+//
+//                    JSONObject quantity = new JSONObject();
+//                    try {
+//                        quantity.put("qty", qty.getText().toString());
+//
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    JSONArray jsonArray = new JSONArray();
+//
+//                    jsonArray.put(quantity);
+//
+//
+//                    JSONObject obj = new JSONObject();
+//                    try {
+//                        obj.put("panenan", jsonArray);
+//                    } catch (JSONException e){
+//                        e.printStackTrace();
+//                    }
+//
+//                    String jsonStr = obj.toString();
+//
+//                    System.out.println("jsonString: " + jsonStr);
+//
+//                }
+
+
+
+
+//                btnSave(test);
+//                Toast.makeText(getContext(), "Fab Clicked"+ text, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+//        minus.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                minus.setBackgroundResource(R.drawable.button_green);
+//                minus.setTextColor(Color.WHITE);
+//                qty_panen = Integer.parseInt(qty.getText().toString());
+//
+//                if (qty_panen >= 0) {
+//                    qty_panen = qty_panen - 1;
+//                    qty.setText("" + qty_panen);
+//                } else {
+//                    Toast.makeText(view.getContext(), "Anda tidak bisa mengurangi Panenan dibawah angka 0 ", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                minus.postDelayed(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        minus.setBackgroundResource(R.drawable.button_gray);
+//                        minus.setTextColor(Color.BLACK);
+//                    }
+//                }, 200);
+//            }
+//        });
+//
+//        plus.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                plus.setBackgroundResource(R.drawable.button_green);
+//                plus.setTextColor(Color.WHITE);
+//                qty_panen = Integer.parseInt(qty.getText().toString());
+//
+//
+//                if (qty_panen >= 0) {
+//                    qty_panen = qty_panen + 1;
+//                    qty.setText("" + qty_panen);
+//                } else {
+//                    qty.setText("0");
+//                }
+//
+//                plus.postDelayed(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        plus.setBackgroundResource(R.drawable.button_gray);
+//                        plus.setTextColor(Color.BLACK);
+//                    }
+//                }, 200);
+//            }
+//        });
 
         mDateButton   = mFragmentView.findViewById(R.id.choose_date);
         mDateSelected = (TextView) mFragmentView.findViewById(R.id.options_date);
@@ -177,6 +505,8 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
             }
         });
 
+
+
         mLoadingView = mFragmentView.findViewById(R.id.loading_view);
         mLoadingText = (TextView) mFragmentView.findViewById(R.id.loading_text);
         mLoadingText.setText("Loading...");
@@ -184,12 +514,12 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
         mEmptyView.setText("Tidak ada Item Panenan");
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        //Change 2 to your choice because here 2 is the number of Grid layout Columns in each row
-        linearLayoutManager = new GridLayoutManager(getActivity(), 2);
+//        //Change 2 to your choice because here 2 is the number of Grid layout Columns in each row
+//        linearLayoutManager = new GridLayoutManager(getActivity(), 1);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setHasFixedSize(true);
-        getKategori();
+//        getKategori();
 
         mDateSelected.setText(new StringBuilder()
                     .append(tanggal_calender));
@@ -201,6 +531,7 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
             kategori_sebelumnya = "SEMUA";
         mAdapter.setList(null);
             getPanenan();
+
         //mLoadingView.setVisibility(View.GONE);
         if (mHasResponse == true) {
             mLoadingView.setVisibility(View.GONE);
@@ -218,7 +549,7 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        int spanCount = 2;
+        int spanCount = 1;
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addOnScrollListener(new EndlessScrollListener() {
@@ -227,6 +558,14 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
                 Log.d(getTag(), "onLoadMore: page " + page);
                 if (mCurrentPage < page && mHasNext) {
                     getPanenan(page);
+
+                    if (flag == 0 ){
+                        ViewGroup.LayoutParams var = mRecyclerView.getLayoutParams();
+                        var.height = mRecyclerView.getHeight() - 180;
+                        Log.i("","height = "+ var.height);
+                        mRecyclerView.setLayoutParams(var);
+                        flag = +1;
+                    }
                 }
             }
         });
@@ -258,6 +597,8 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
             hari_now = day_name[ttl-1];
             Log.i("TANGGAL ON CREATE:"," "+tanggal+ " TANGGAL KALENDER : "+ tanggal_calender + " TANGGAL SET :" + tanggal_set+" TANGGAL DISABLE " + hari_now+" "+ttl);
             enabledDate(namaPetani,hari_now);
+
+
         }
     }
 
@@ -274,6 +615,13 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
         super.onDestroyView();
     }
 
+
+
+    private void btnSave(final int test){
+
+        Toast.makeText(getContext(), test, Toast.LENGTH_SHORT).show();
+
+    }
 
 
 
@@ -341,8 +689,9 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
     }
     
     private void getPanenan(final int page) {
-        mLoadingView.setVisibility(View.VISIBLE);
+//        mLoadingView.setVisibility(View.VISIBLE);
         Call<Page<PanenanResponse>> call = null;
+
         final PanenanRequest params = new PanenanRequest();
         params.setTanggal(tanggal);
         params.setKategori(kategori);
@@ -361,6 +710,8 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
                     if (mLoadingView != null) {
                         mLoadingView.setVisibility(View.GONE);
                     }
+
+
                 }
                 mHasResponse = true;
                 mLoadingView.setVisibility(View.GONE);
@@ -389,82 +740,6 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
         getPanenan(page);
     }
 
-
-//    private void ShowDisabledDate(){
-//
-//        Calendar cal = Calendar.getInstance();
-//
-//        cal.add(Calendar.DATE, -7);
-//        Date minDate = cal.getTime();
-//
-//        // Max date is next 7 days
-//        cal = Calendar.getInstance();
-//        cal.add(Calendar.DATE, 14);
-//        Date maxDate = cal.getTime();
-//
-//        // Set selected dates
-//        // From Date
-//        cal = Calendar.getInstance();
-//        cal.add(Calendar.DATE, 2);
-//        Date fromDate = cal.getTime();
-//
-//        // To Date
-//        cal = Calendar.getInstance();
-//        cal.add(Calendar.DATE, 3);
-//        Date toDate = cal.getTime();
-//
-//        // Set disabled dates
-//        ArrayList<Date> disabledDates = new ArrayList<Date>();
-//        for (int i = 5; i < 8; i++) {
-//            cal = Calendar.getInstance();
-//            cal.add(Calendar.DATE, i);
-//            disabledDates.add(cal.getTime());
-//        }
-//
-//        // Customize
-//        caldroidFragment.setMinDate(minDate);
-//        caldroidFragment.setMaxDate(maxDate);
-//        caldroidFragment.setDisableDates(disabledDates);
-//        caldroidFragment.setSelectedDates(fromDate, toDate);
-//        caldroidFragment.setShowNavigationArrows(false);
-//        caldroidFragment.setEnableSwipe(false);
-//
-//        caldroidFragment.refreshView();
-//
-//        final Bundle state = savedInstanceState;
-//        showDialogButton.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                // Setup caldroid to use as dialog
-//                dialogCaldroidFragment = new CaldroidFragment();
-//                dialogCaldroidFragment.setCaldroidListener(listener);
-//
-//
-//
-//                // If activity is recovered from rotation
-//                final String dialogTag = "CALDROID_DIALOG_FRAGMENT";
-//                if (state != null) {
-//                    dialogCaldroidFragment.restoreDialogStatesFromKey(
-//                            getSupportFragmentManager(), state,
-//                            "DIALOG_CALDROID_SAVED_STATE", dialogTag);
-//                    Bundle args = dialogCaldroidFragment.getArguments();
-//                    if (args == null) {
-//                        args = new Bundle();
-//                        dialogCaldroidFragment.setArguments(args);
-//                    }
-//                } else {
-//                    // Setup arguments
-//                    Bundle bundle = new Bundle();
-//                    // Setup dialogTitle
-//                    dialogCaldroidFragment.setArguments(bundle);
-//                }
-//
-//                dialogCaldroidFragment.show(getSupportFragmentManager(),
-//                        dialogTag);
-//            }
-//        });
-//    }
 
     private void enabledDate(final String idPetani, final String haridisable){
         RequestQueue queue = Volley.newRequestQueue(this.getContext());
@@ -570,6 +845,11 @@ public class PanenanFragment extends Fragment implements PanenanAdapter.PageLoad
     }
 
 
+//    private void SaveAllPanens(final String id_panen, String quantity_panen, String tgl_panen){
+//        JSONObject js = new JSONObject();
+//
+//        mAdapter.SaveAll();
+//    }
 
     private DatePickerDialog.OnDateSetListener
             datePickerListener = new  DatePickerDialog.OnDateSetListener()

@@ -231,9 +231,6 @@ public class PanenanDetailFragment extends Fragment {
                     SaveNew(id_petani_barang.getText().toString().trim(),tanggal_panenan, jumlah.getText().toString());
 
 
-
-
-
                     //Toast.makeText(view.getContext(), "" + psn , Toast.LENGTH_SHORT).show();
                 }
             }

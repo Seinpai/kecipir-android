@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.2'
     defaultConfig {
         applicationId "com.kecipir.petani"
         minSdkVersion 16
@@ -38,6 +38,8 @@ dependencies {
     // Glide
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.android.volley:volley:1.0.0'
+    compile 'com.amitshekhar.android:android-networking:1.0.1'
+
 //    compile 'com.github.rahatarmanahmed:circularprogressview:2.3.2'
 //    compile 'com.hannesdorfmann.smoothprogressbar:library:1.0.0'
 //    compile 'com.github.jlmd:AnimatedCircleLoadingView:1.1.5@aar'
