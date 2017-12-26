@@ -1,10 +1,12 @@
 package com.kecipir.petani.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +17,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
@@ -36,9 +44,13 @@ import com.kecipir.petani.util.LargeValueFormatter;
 
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -121,10 +133,12 @@ public class DashboardMonthlyFragment extends Fragment {
         yAxis.setValueFormatter(new LargeValueFormatter());
         yAxis.setGridColor(getResources().getColor(R.color.colorPrimary));
 
+        final String id = mAccountPreference.getName().trim();
         btnPrintMonthly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(),"Coming Soon",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(),"ID: "+id+" | start: "+startDate+" | end: "+endDate,Toast.LENGTH_SHORT).show();
+                printMonthly(id,startDate.toString(),endDate.toString());
             }
         });
 
@@ -148,6 +162,75 @@ public class DashboardMonthlyFragment extends Fragment {
 //        if (!mHasResponse) {
             refreshChart();
 //        }
+    }
+
+    public void printMonthly(final String Id_User, final String Start_Date, final String End_Date){
+        RequestQueue queue = Volley.newRequestQueue(this.getContext());
+        final String url = "http://petani.kecipir.com/api/petani/AppPanen.php";
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new com.android.volley.Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        Log.d("Response", response);
+
+                        Log.i("",""+Id_User+" || "+Start_Date+" || "+End_Date);
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+
+                            String success = jsonObject.getString("success");
+
+                            if (success.equals("1")) {
+                                new AlertDialog.Builder(getContext())
+                                        .setTitle("Berhasil")
+                                        .setMessage("Laporan Bulanan Telah Dikirim Via Email")
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                            }
+                                        })
+                                        .show();
+                            } else {
+                                new AlertDialog.Builder(getContext())
+                                        .setTitle("Gagal")
+                                        .setMessage("Cek Koneksi Anda")
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                            }
+                                        })
+                                        .show();
+                            }
+                        } catch (JSONException e){
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new com.android.volley.Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Log.d("Error.Response", error.getMessage());
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("tag", "print_bulanan");
+                params.put("petani", Id_User);
+                params.put("start_date", Start_Date);
+                params.put("end_date", End_Date);
+                return params;
+            }
+        };
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(20000,2,2f));
+        queue.add(postRequest);
     }
 
     private void refreshChart() {

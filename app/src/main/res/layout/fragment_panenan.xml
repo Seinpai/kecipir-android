@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,33 +9,197 @@
     tools:context="com.kecipir.petani.fragment.PanenanFragment">
 
     <LinearLayout
+        android:id="@+id/focused"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:focusableInTouchMode="true">
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.design.widget.CoordinatorLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/panenan_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingLeft="@dimen/_7sdp"
+                    android:paddingRight="@dimen/_7sdp"
+                    android:scrollbars="vertical" />
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fab_save1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="@dimen/fab_margin"
+                    android:visibility="gone"
+                    android:src="@android:drawable/ic_menu_save" />
+
+                <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+                    <!--android:id="@+id/filters"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginBottom="@dimen/_10sdp"-->
+                    <!--android:layout_marginTop="@dimen/_10sdp"-->
+                    <!--android:background="@android:color/transparent"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_gravity="bottom"-->
+                    <!--android:paddingLeft="@dimen/_12sdp"-->
+                    <!--android:paddingRight="@dimen/_12sdp">-->
+
+                    <!--<LinearLayout-->
+                        <!--android:layout_width="fill_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginRight="@dimen/_12sdp"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:orientation="vertical">-->
+
+                        <!--<TextView-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:text="Tanggal Panen"-->
+                            <!--android:textSize="16sp" />-->
+
+                        <!--<LinearLayout-->
+                            <!--android:id="@+id/choose_date"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_marginTop="@dimen/_2sdp"-->
+                            <!--android:orientation="horizontal">-->
+
+                            <!--<TextView-->
+                                <!--android:id="@+id/options_date"-->
+                                <!--android:layout_width="0dp"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:layout_weight="1"-->
+                                <!--android:gravity="fill_vertical"-->
+                                <!--android:text="20 April 2017"-->
+                                <!--android:textColor="@color/colorPrimaryDark"-->
+                                <!--android:textSize="16sp" />-->
+
+                            <!--<ImageView-->
+                                <!--android:layout_width="wrap_content"-->
+                                <!--android:layout_height="wrap_content"-->
+                                <!--android:layout_gravity="fill_vertical"-->
+                                <!--android:scaleType="fitCenter"-->
+                                <!--android:src="@drawable/ic_arrow_drop_down_black" />-->
+                        <!--</LinearLayout>-->
+                    <!--</LinearLayout>-->
+
+                    <!--<LinearLayout-->
+                        <!--android:layout_width="fill_parent"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:layout_marginLeft="12dp"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:orientation="vertical">-->
+
+                        <!--<TextView-->
+                            <!--android:id="@+id/fab_save"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="match_parent"-->
+                            <!--android:background="@drawable/button_orange"-->
+                            <!--android:paddingLeft="6dp"-->
+                            <!--android:paddingTop="@dimen/_8sdp"-->
+                            <!--android:text="Simpan"-->
+                            <!--android:textColor="#fff"-->
+                            <!--android:textAlignment="center"-->
+                            <!--android:onClick="onClick"-->
+                            <!--android:textSize="20sp" />-->
+
+
+                    <!--</LinearLayout>-->
+
+                    <!--<LinearLayout-->
+                        <!--android:layout_width="fill_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="12dp"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:visibility="gone"-->
+                        <!--android:orientation="vertical">-->
+
+                        <!--<TextView-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:paddingLeft="6dp"-->
+                            <!--android:text="Kategori"-->
+                            <!--android:textSize="16sp" />-->
+
+                        <!--<LinearLayout-->
+                            <!--android:id="@+id/choose_category"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_marginTop="@dimen/_2sdp"-->
+                            <!--android:orientation="horizontal"-->
+                            <!--android:paddingLeft="6dp">-->
+
+                            <!--<Spinner-->
+                                <!--android:id="@+id/options_category"-->
+                                <!--android:layout_width="0dp"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:layout_weight="1"-->
+                                <!--android:background="@null"-->
+                                <!--android:gravity="fill_vertical"-->
+                                <!--android:textColor="@color/colorPrimaryDark"-->
+                                <!--android:textSize="16sp" />-->
+
+                            <!--<ImageView-->
+                                <!--android:layout_width="wrap_content"-->
+                                <!--android:layout_height="wrap_content"-->
+                                <!--android:layout_gravity="fill_vertical"-->
+                                <!--android:scaleType="fitCenter"-->
+                                <!--android:src="@drawable/ic_arrow_drop_down_black" />-->
+                        <!--</LinearLayout>-->
+                    <!--</LinearLayout>-->
+
+
+
+                <!--</LinearLayout>-->
+
+
+            </android.support.design.widget.CoordinatorLayout>
+
+        </LinearLayout>
+
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/filters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:background="@android:color/transparent"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/_12sdp"
-            android:paddingRight="@dimen/_12sdp">
+            android:gravity="bottom"
+            android:background="@color/caldroid_transparent"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            >
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/_12sdp"
                 android:layout_weight="1"
+                android:background="@drawable/button_square_gray"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Tanggal Panen"
+                    android:textAlignment="center"
                     android:textSize="16sp" />
 
                 <LinearLayout
@@ -49,7 +214,8 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="fill_vertical"
+                        android:gravity="left"
+                        android:textAlignment="center"
                         android:text="20 April 2017"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="16sp" />
@@ -57,10 +223,32 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="fill_vertical"
                         android:scaleType="fitCenter"
+                        android:layout_marginRight="@dimen/_5sdp"
                         android:src="@drawable/ic_arrow_drop_down_black" />
                 </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/fab_save"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/button_orange"
+                    android:paddingLeft="6dp"
+                    android:paddingTop="@dimen/_8sdp"
+                    android:text="Simpan"
+                    android:textColor="#fff"
+                    android:textAlignment="center"
+                    android:onClick="onClick"
+                    android:textSize="20sp" />
+
+
             </LinearLayout>
 
             <LinearLayout
@@ -68,6 +256,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
                 android:layout_weight="1"
+                android:visibility="gone"
                 android:orientation="vertical">
 
                 <TextView
@@ -103,22 +292,11 @@
                         android:src="@drawable/ic_arrow_drop_down_black" />
                 </LinearLayout>
             </LinearLayout>
+
+
+
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/panenan_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:paddingLeft="@dimen/_7sdp"
-                android:paddingRight="@dimen/_7sdp"
-                android:scrollbars="vertical" />
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/loading_view"
@@ -143,6 +321,8 @@
 
         </LinearLayout>
 
+
+
         <TextView
             android:id="@+id/empty_view"
             android:layout_width="wrap_content"
@@ -152,6 +332,25 @@
             android:gravity="center"
             android:visibility="gone" />
 
+        <EditText
+            android:id="@+id/PanenanReq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawablePadding="16dp"
+            android:gravity="center"
+            android:visibility="gone" />
+
     </LinearLayout>
+
+    <com.victor.loading.rotate.RotateLoading
+        android:id="@+id/rotateloading"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_centerInParent="true"
+        app:loading_color="@color/colorPrimary"
+        app:loading_speed="11"
+        app:loading_width="10dp" />
+
 
 </RelativeLayout>
